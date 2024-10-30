@@ -1,5 +1,15 @@
 #include "philosophers.h"
 
+void  print_int_arr(int *arr, int len)
+{
+  int n = 0;
+  while (n < len)
+  {
+    printf("item [%d] - %d\n", n+1, arr[n]);
+    n++;
+  }
+}
+
 int	main(int argc, char **argv)
 {
 	//1- n_philos & n_forks 
@@ -51,15 +61,19 @@ int	main(int argc, char **argv)
   t_table *table;
   t_node  *head;
   int     *valid_args;
+  int     valid_args_len;
 
-  valid_args = validate_argv(argc, argv, &is_valid_int);
+  valid_args = validate_argv(argc, argv, &is_valid_int, &valid_args_len);
   if (!valid_args)
     return (-1);
-  //free(valid_args);
-  /*
+  print_int_arr(valid_args, valid_args_len);
+
   table = init_table(valid_args[0]);
   if (!table)
-    return (NULL);
+    return (-1);
+  printf("Table philos Arg : %d - Bowl : %d\n", table->n_philos, table->shared_bowl);
+
+  //TODO: Pass table to each philo_data
   head = create_table(table->n_philos, valid_args);
   if (head)
   {
@@ -71,12 +85,18 @@ int	main(int argc, char **argv)
     return (-1);
   }
 	
-  clear_list(head);
-  */
+  clear_list(&head);
+  if (head == NULL)
+    printf("======== CLEANED UP\n");
+  else {
+    printf("==== head %p\n", head);
+    print_node(head);
+  }
+  free(valid_args);
 }
 
 //TODO:
-// cc main.c init_table.c create_table.c split_on.c validate_argv.c validation_func.c strings.c
+// cc -fsanitize=address -g main.c init_table.c create_table.c split_on.c validate_argv.c validation_func.c strings.c
 
 /* logs format
  * ◦ timestamp_in_ms X has taken a fork

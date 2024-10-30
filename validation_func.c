@@ -25,7 +25,7 @@ int is_valid_int(const char *str)
   sign = 1;
   while (*str == '-' || *str == '+')
   {
-    if (*str == '-') sign = -1;
+    if (*str == '-') sign *= -1;
     str++;
   }
   if (!ft_isdigit(*str)) return (0);

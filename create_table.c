@@ -8,7 +8,8 @@ t_node  *create_node(int  *valid_args)
   if (!new_node)
     return (NULL);
   new_node->is_alive = 1;
-  new_node->id = 0;
+  new_node->id = 1;
+  new_node->fork = 0;
   new_node->time_to_die = valid_args[1];
   new_node->time_to_eat = valid_args[2];
   new_node->time_to_sleep = valid_args[3];
@@ -33,30 +34,41 @@ int add_node_back(t_node *head, t_node* new_node)
   }
   tmp->next = new_node;
   new_node->next = head;
-  new_node->id = i;
+  new_node->id = tmp->id+1;
   return (1);
 }
 
-void  clear_list(t_node *head)
+void  clear_list(t_node **head)
 {
   t_node  *current;
   t_node  *next;
 
-  if (!head)
+  if (*head == NULL)
     return ;
-  current = head;
-  next = current->next;
-  if (next == head)
+  if ((*head)->next == *head)
   {
-    free(current);
+    free(*head);
     return ;
   }
-  while (next != head)
+  current = (*head)->next;
+  while (next != *head)
   {
-    next = next->next;
+    next = current->next;
+    printf("im going to free node id : %d\n", current->id);
     free(current);
     current = next;
   }
+  free(*head);
+  *head = NULL;
+}
+
+void  print_node(t_node *node)
+{
+  if (node == NULL)
+    printf("Empty Node\n");
+  printf("Id : %d, Is_alive : %d, Fork_state : %d, ", node->id, node->is_alive, node->fork);
+  printf("time_to_die : %d, time_to_eat : %d, time_to_sleep : %d, ", node->time_to_die, node->time_to_eat, node->time_to_sleep);
+  printf("times_to_eat : %d, next_id : %d \n", node->times_to_eat, node->next->id);
 }
 
 void  print_table(t_node *head)
@@ -64,11 +76,11 @@ void  print_table(t_node *head)
   t_node  *current;
 
   current = head;
-  printf("Id : %d, Is_alive : %d\n", current->id, current->is_alive);
-  current = current->next;
+  print_node(current);
+  current = (t_node *)current->next;
   while (current != head)
   {
-    printf("Id : %d, Is_alive : %d\n", current->id, current->is_alive);
+    print_node(current);
     current = current->next;
   }
 }
@@ -89,7 +101,7 @@ t_node  *create_table(int elements, int *valid_args)
   while (elements--)
   {
     if (!add_node_back(head, create_node(valid_args)))
-      return (clear_list(head), NULL);
+      return (clear_list(&head), NULL);
   }
   return (head);
 }

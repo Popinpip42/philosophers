@@ -34,11 +34,13 @@ t_node  *create_table(int elements, int *valid_args);
 t_table *init_table(int n_philos);
 
 //List Functions
-void    clear_list(t_node *head);
+void    print_node(t_node *node);
+void    clear_list(t_node **head);
 void    print_table(t_node *head);
 
 //Validation
-int *validate_argv(int argc, char **argv, t_validation_func validate);
+//int *validate_argv(int argc, char **argv, t_validation_func validate);
+int *validate_argv(int argc, char **argv, t_validation_func validate, int *len);
 
 //Validation Func
 int is_overflowing(long result, int digit, int sign);
@@ -52,5 +54,6 @@ char  **split_on(const char *s, t_is_separator is_separator);
 
 //Strings
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
+int	ft_atoi(const char *str);
 
 #endif
