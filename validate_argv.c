@@ -80,6 +80,7 @@ int *validate_argv(int argc, char **argv, t_validation_func validate, int *len)
   valid_args = (int *)malloc(valid_args_len * sizeof(int));
   if (!valid_args)
     return (printf("malloc error2\n"), NULL);
+  items_added = 0;
   i = 1;
   while (i < argc)
   {

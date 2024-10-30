@@ -56,4 +56,6 @@ char  **split_on(const char *s, t_is_separator is_separator);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 int	ft_atoi(const char *str);
 
+//AUXILIAR_FOR DEBUGGING
+void  print_int_arr(int *arr, int len);
 #endif

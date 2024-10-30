@@ -66,14 +66,16 @@ int	main(int argc, char **argv)
   valid_args = validate_argv(argc, argv, &is_valid_int, &valid_args_len);
   if (!valid_args)
     return (-1);
+  printf("Valid_args_len %d\n", valid_args_len);
   print_int_arr(valid_args, valid_args_len);
 
   table = init_table(valid_args[0]);
   if (!table)
-    return (-1);
+    return (free(valid_args), -1);
   printf("Table philos Arg : %d - Bowl : %d\n", table->n_philos, table->shared_bowl);
 
   //TODO: Pass table to each philo_data
+  //TODO: Check if valid_args_len is either 4 or 5
   head = create_table(table->n_philos, valid_args);
   if (head)
   {
@@ -82,6 +84,8 @@ int	main(int argc, char **argv)
   }
   else {
     printf("Not correctly initialized\n");
+    free(valid_args);
+    free(table);
     return (-1);
   }
 	
@@ -93,10 +97,17 @@ int	main(int argc, char **argv)
     print_node(head);
   }
   free(valid_args);
+  free(table);
+  return (0);
+  //system("leaks a.out");
 }
 
 //TODO:
 // cc -fsanitize=address -g main.c init_table.c create_table.c split_on.c validate_argv.c validation_func.c strings.c
+// cc -g main.c init_table.c create_table.c split_on.c validate_argv.c validation_func.c strings.c
+// LEAKS:
+// sudo leaks -atExit -- ./a.out 10 1 2 3 4 5
+
 
 /* logs format
  * ◦ timestamp_in_ms X has taken a fork
