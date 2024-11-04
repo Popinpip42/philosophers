@@ -12,26 +12,32 @@ typedef int (*t_validation_func)(const char *);
 typedef int (*t_is_separator)(int);
 typedef int (*t_filter_func)(int, int *, int);
 
-typedef struct s_table{
-  int shared_bowl;
-  int n_philos;
+typedef struct s_table
+{
+  int             shared_bowl;
+  int             n_philos;
+  pthread_mutex_t bowl_mutex;
 } t_table;
 
 typedef struct s_node
 {
-  int           is_alive;
-  int           id;
-  int           fork;
-  int           time_to_die;
-  int           time_to_eat;
-  int           time_to_sleep;
-  int           times_to_eat; //If (0) or (-1), we run simulation infinetly
-  struct s_node *next;
+  int             is_alive;
+  int             id;
+  int             fork;
+  int             time_to_die;
+  int             time_to_eat;
+  int             time_to_sleep;
+  int             times_to_eat; //If (0) or (-1), we run simulation infinetly
+  pthread_mutex_t fork_mutex;
+  t_table         *table;
+  struct s_node   *next;
 } t_node;
 
 //Core Functions
-t_node  *create_table(int elements, int *valid_args);
+//t_node  *create_table(int elements, int *valid_args, t_table *table);
+t_node  *create_table(int elements, int *valid_args, int args_len, t_table *table);
 t_table *init_table(int n_philos);
+void    clear_table(t_table **table);
 
 //List Functions
 void    print_node(t_node *node);
@@ -44,7 +50,8 @@ int *validate_argv(int argc, char **argv, t_validation_func validate, int *len);
 
 //Validation Func
 int is_overflowing(long result, int digit, int sign);
-int is_valid_int(const char *str);
+//int is_valid_int(const char *str);
+int is_valid_pos_int(const char *str);
 
 //Split_on
 int   count_words(const char *s, t_is_separator is_separator);
@@ -58,4 +65,5 @@ int	ft_atoi(const char *str);
 
 //AUXILIAR_FOR DEBUGGING
 void  print_int_arr(int *arr, int len);
+
 #endif

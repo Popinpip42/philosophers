@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-t_node  *create_node(int  *valid_args)
+t_node  *create_node(int  *valid_args, int args_len, t_table *table)
 {
   t_node  *new_node;
 
@@ -13,8 +13,15 @@ t_node  *create_node(int  *valid_args)
   new_node->time_to_die = valid_args[1];
   new_node->time_to_eat = valid_args[2];
   new_node->time_to_sleep = valid_args[3];
-  new_node->times_to_eat = valid_args[4];
+  if (args_len == 5)
+    new_node->times_to_eat = valid_args[4];
+  else
+    new_node->times_to_eat = -1;
+  new_node->table = table;
+  //new_node->for_mutex = NULL;
   new_node->next = new_node;
+  if (pthread_mutex_init(&new_node->fork_mutex, NULL) != 0)
+    return (NULL);
   return (new_node);
 }
 
@@ -47,7 +54,9 @@ void  clear_list(t_node **head)
     return ;
   if ((*head)->next == *head)
   {
+    pthread_mutex_destroy(&(*head)->fork_mutex);
     free(*head);
+    *head = NULL;
     return ;
   }
   current = (*head)->next;
@@ -55,9 +64,12 @@ void  clear_list(t_node **head)
   {
     next = current->next;
     printf("im going to free node id : %d\n", current->id);
+    pthread_mutex_destroy(&current->fork_mutex);
     free(current);
     current = next;
   }
+  printf("im going to free node id : %d\n",(*head)->id);
+  pthread_mutex_destroy(&(*head)->fork_mutex);
   free(*head);
   *head = NULL;
 }
@@ -68,8 +80,10 @@ void  print_node(t_node *node)
     printf("Empty Node\n");
   printf("Id : %d, Is_alive : %d, Fork_state : %d, ", node->id, node->is_alive, node->fork);
   printf("time_to_die : %d, time_to_eat : %d, time_to_sleep : %d, ", node->time_to_die, node->time_to_eat, node->time_to_sleep);
-  printf("times_to_eat : %d, next_id : %d \n", node->times_to_eat, node->next->id);
-}
+  printf("times_to_eat : %d, next_id : %d, table-bowl-state : %d \n", node->times_to_eat, node->next->id, node->table->shared_bowl);
+  //printf("Table pointer %p\n", node->table);
+  //printf("Table n_philos %d\n", node->table->n_philos);
+};
 
 void  print_table(t_node *head)
 {
@@ -85,7 +99,7 @@ void  print_table(t_node *head)
   }
 }
 
-t_node  *create_table(int elements, int *valid_args)
+t_node  *create_table(int elements, int *valid_args, int args_len, t_table *table)
 {
   t_node  *head;
   int     i;
@@ -94,13 +108,13 @@ t_node  *create_table(int elements, int *valid_args)
     return (NULL);
 
   //i = 1;
-  head = create_node(valid_args);
+  head = create_node(valid_args, args_len, table);
   if (!head)
     return (NULL);
   elements--;
   while (elements--)
   {
-    if (!add_node_back(head, create_node(valid_args)))
+    if (!add_node_back(head, create_node(valid_args, args_len, table)))
       return (clear_list(&head), NULL);
   }
   return (head);

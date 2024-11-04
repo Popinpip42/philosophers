@@ -16,10 +16,10 @@ int is_overflowing(long result, int digit, int sign)
   return (0);
 }
 
-int is_valid_int(const char *str)
+int is_valid_pos_int(const char *str)
 {
-  long result;
-  int sign;
+  long  result;
+  int   sign;
 
   while (isspace(*str)) str++;
   sign = 1;
@@ -30,13 +30,14 @@ int is_valid_int(const char *str)
   }
   if (!ft_isdigit(*str)) return (0);
   result = 0;
-  while (ft_isdigit(*str)) {
-    int digit = *str - '0';
-    if (is_overflowing(result, digit, sign))
+  while (ft_isdigit(*str))
+  {
+    if (is_overflowing(result, (*str - '0'), sign))
       return (0);
-    result = result * 10 + digit;
+    result = result * 10 + (*str - '0');
     str++;
   }
+  if ((result * sign) <= 0) return (0);
   while (isspace(*str)) str++;
   return (*str == '\0');
 }
