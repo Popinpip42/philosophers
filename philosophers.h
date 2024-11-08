@@ -7,6 +7,8 @@
 # include <string.h>
 # include <ctype.h> //Currently using for isspace()
 # include <limits.h> //Currently using for INT_MAX/MIN
+# include <sys/time.h> //gettimeofday()
+# include <unistd.h> //usleep()
 
 typedef int (*t_validation_func)(const char *);
 typedef int (*t_is_separator)(int);
@@ -14,24 +16,37 @@ typedef int (*t_filter_func)(int, int *, int);
 
 typedef struct s_table
 {
-  int             shared_bowl;
   int             n_philos;
-  pthread_mutex_t bowl_mutex;
+  long            start_time;
+  int             *state_table;
+  int             *queue;
+  int             queue_size; //TODO: must be thread safe
+  int             deaths_count;
+  int             completed_count;
+  pthread_mutex_t deaths_mutex;
+  pthread_mutex_t completed_mutex;
+  pthread_mutex_t print_mutex;
+  pthread_mutex_t queue_mutex;
+  pthread_mutex_t queue_mutex2;
 } t_table;
 
 typedef struct s_node
 {
   int             is_alive;
   int             id;
-  int             fork;
+  long            last_meal_time;
   int             time_to_die;
   int             time_to_eat;
   int             time_to_sleep;
-  int             times_to_eat; //If (0) or (-1), we run simulation infinetly
+  int             times_to_eat; //This value is set to (-1) if 5th arg is not defined, we run simulation infinetly
   pthread_mutex_t fork_mutex;
   t_table         *table;
   struct s_node   *next;
 } t_node;
+
+//Simulation Functions
+long  get_time_ms();
+void  run_simulation(t_node *head, t_table *table);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);

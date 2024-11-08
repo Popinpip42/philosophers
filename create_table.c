@@ -9,7 +9,7 @@ t_node  *create_node(int  *valid_args, int args_len, t_table *table)
     return (NULL);
   new_node->is_alive = 1;
   new_node->id = 1;
-  new_node->fork = 0;
+  new_node->last_meal_time = 0;
   new_node->time_to_die = valid_args[1];
   new_node->time_to_eat = valid_args[2];
   new_node->time_to_sleep = valid_args[3];
@@ -18,14 +18,13 @@ t_node  *create_node(int  *valid_args, int args_len, t_table *table)
   else
     new_node->times_to_eat = -1;
   new_node->table = table;
-  //new_node->for_mutex = NULL;
   new_node->next = new_node;
   if (pthread_mutex_init(&new_node->fork_mutex, NULL) != 0)
     return (NULL);
   return (new_node);
 }
 
-int add_node_back(t_node *head, t_node* new_node)
+int add_node_back(t_node *head, t_node *new_node)
 {
   t_node  *tmp;
   int     i;
@@ -34,7 +33,7 @@ int add_node_back(t_node *head, t_node* new_node)
     return (0);
   i = 1;
   tmp = head;
-  while (tmp->next != head) //TODO: verify that tmp->next is not NULL
+  while (tmp->next != head)
   {
     tmp = tmp->next;
     i++;
@@ -78,9 +77,9 @@ void  print_node(t_node *node)
 {
   if (node == NULL)
     printf("Empty Node\n");
-  printf("Id : %d, Is_alive : %d, Fork_state : %d, ", node->id, node->is_alive, node->fork);
+  printf("Id : %d, Is_alive : %d, ", node->id, node->is_alive);
   printf("time_to_die : %d, time_to_eat : %d, time_to_sleep : %d, ", node->time_to_die, node->time_to_eat, node->time_to_sleep);
-  printf("times_to_eat : %d, next_id : %d, table-bowl-state : %d \n", node->times_to_eat, node->next->id, node->table->shared_bowl);
+  printf("times_to_eat : %d, next_id : %d \n", node->times_to_eat, node->next->id);
   //printf("Table pointer %p\n", node->table);
   //printf("Table n_philos %d\n", node->table->n_philos);
 };

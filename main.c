@@ -59,19 +59,29 @@ int	main(int argc, char **argv)
     return (-1);
   }
 	
-  //TODO:
-  /*
-  if (valid_args_len == 4) //(head->times_to_eat == -1)
-  {
-    //Run_simulation_infinetly;
-    //Pthread_detach;
-  }
-  else
-  {
-    //Run_simulation(times_to_eat);
-    //Pthread_join;
-  }
-  */
+  //TODO: In my implementation each philo holds its lesser fork to the right
+  //  philo-1, has its fork 1 to the right and fork 2 to the left
+  //  piilo-6 has its for 6 to the right and 1 to the left
+  //TODO: Finally came with a solution that i like (:DDD)
+  //- Resource hierarchy solution + round robin
+  //Round robin is implementated with a queue like ds,
+  //where we compute the amount of philosophers that can eat at a given time 
+  //(p) (p = N / 2). If N is even, the distribution is pretty simple
+  //We initiate the queue like ds, with the id of all philosophers
+  //- for the first round and N = 6, philos 1, 3 and 5 eat
+  //- for the second round and N = 6, philos 2, 4 and 6 eat
+  //- after eating, each philos set its index in the queue to -1,
+  //- and updates its index from his id to (-1), and reduce the queue_size variable
+  //- if (queue_size == 0 ) -> we update all values to its initial state
+  //- TODO: This needs to be adjusted for cases wehere N is odd
+  //- We might want philo 1 to always be the one that start eating
+  //- partial_update, when queue_size is odd:
+  //- We can find the next philo available for eating and "add it to the queue"
+  //- We keep adding until we reach P
+  run_simulation(head, table);
+  printf("=== Table time start  in main() : %lu\n", table->start_time);
+  //TODO: Implement Resource hiarchy solution (avoids deadlock) 
+  //          + other ROUND ROBIN (avoid starvation)
 
   clear_list(&head);
   if (head == NULL)
@@ -111,13 +121,6 @@ int	main(int argc, char **argv)
  *   by other philos log
  * - No more than 10ms between 
  *   the dead of a philo and the log
- */
-
-/* PHILOS PLACING
- * - philo with id (1) sits next to philo(N)
- * - others sit between N-1 and N+1
- * - EX :
- * - N-1-2-3-4-N
  */
 
 /* GENERAL INSTRUCTIONS
