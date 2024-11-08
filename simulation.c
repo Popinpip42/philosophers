@@ -30,11 +30,68 @@ void  *philosopher_routine(void *arg)
   philo_data = (t_node *)arg;
   table = philo_data->table;
 
-  //while (1)
+  //ROUTINE : take forks, eat, release forks, sleep, think ->
+  while (philo_data->is_alive)
   {
-    //Check if philospher died
+    // Check if philosopher has died
+    elapsed_time = get_time_ms() - philo_data->last_meal_time;
+    if (elapsed_time > (long)philo_data->time_to_die)
+    {
+      print_trace(table, philo_data->id, get_time_ms(), "died");
+      pthread_mutex_lock(&table->deaths_mutex);
+      table->deaths_count++;
+      pthread_mutex_unlock(&table->deaths_mutex);
+      philo_data->is_alive = 0;
+      break;
+    }
+
+
+    // Odd/even strategy for taking forks
+    if (philo_data->id % 2 == 0)
+    {
+      // Even ID: Pick up left fork first, then right fork
+      pthread_mutex_lock(&philo_data->fork_mutex);
+      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      pthread_mutex_lock(&philo_data->next->fork_mutex);
+      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+    }
+    else
+    {
+      // Odd ID: Pick up right fork first, then left fork
+      pthread_mutex_lock(&philo_data->next->fork_mutex);
+      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      pthread_mutex_lock(&philo_data->fork_mutex);
+      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+    }
+
+    // Eating
+    print_trace(table, philo_data->id, get_time_ms(), "is eating");
+    usleep(philo_data->time_to_eat * 1000);
+    philo_data->last_meal_time = get_time_ms();
+
+    // Release forks
+    pthread_mutex_unlock(&philo_data->fork_mutex);
+    pthread_mutex_unlock(&philo_data->next->fork_mutex);
+
+    if (philo_data->times_to_eat != -1)
+      philo_data->times_to_eat--;
+
+    if (philo_data->times_to_eat == 0)
+    {
+      pthread_mutex_lock(&table->completed_mutex);
+      table->completed_count++;
+      pthread_mutex_unlock(&table->completed_mutex);
+      break;
+    }
+
+    // Sleeping
+    print_trace(table, philo_data->id, get_time_ms(), "is sleeping");
+    usleep(philo_data->time_to_sleep * 1000);
+
+    // Thinking
+    print_trace(table, philo_data->id, get_time_ms(), "is thinking");
+    usleep(1000); // Simulate thinking
   }
-  //take forks, eat, release forks, sleep, think ->
 }
 
 void update_state_table(t_table *table)
