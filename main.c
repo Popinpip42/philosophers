@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-void  print_int_arr(int *arr, int len)
+void	print_int_arr(int *arr, int len)
 {
   int n = 0;
   while (n < len)
@@ -79,7 +79,7 @@ int	main(int argc, char **argv)
   //- We can find the next philo available for eating and "add it to the queue"
   //- We keep adding until we reach P
   run_simulation(head, table);
-  printf("=== Table time start  in main() : %lu\n", table->start_time);
+  //printf("=== Table time start  in main() : %lu\n", table->start_time);
   //TODO: Implement Resource hiarchy solution (avoids deadlock) 
   //          + other ROUND ROBIN (avoid starvation)
 
