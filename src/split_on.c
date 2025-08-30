@@ -1,4 +1,4 @@
-#include "philosophers.h"
+#include "../include/philosophers.h"
 
 int count_words(const char *s, t_is_separator is_separator)
 {

@@ -14,6 +14,8 @@ typedef int (*t_validation_func)(const char *);
 typedef int (*t_is_separator)(int);
 typedef int (*t_filter_func)(int, int *, int);
 
+typedef struct s_node t_node;
+
 typedef struct s_table
 {
   int             n_philos;
@@ -21,12 +23,13 @@ typedef struct s_table
   int             deaths_count;
   int             completed_count;
   int             simulation_state;
+  //t_node          *philo_head_list;
   pthread_mutex_t deaths_mutex;
   pthread_mutex_t completed_mutex;
   pthread_mutex_t print_mutex;
 }	t_table;
 
-typedef struct s_node
+struct s_node
 {
   int             is_alive;
   int             id;
@@ -37,8 +40,8 @@ typedef struct s_node
   int             times_to_eat; //This value is set to (-1) if 5th arg is not defined, we run simulation infinetly
   pthread_mutex_t fork_mutex;
   t_table         *table;
-  struct s_node   *next;
-}	t_node;
+  t_node          *next;
+};
 
 //Simulation Functions
 long	get_time_ms();

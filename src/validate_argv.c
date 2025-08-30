@@ -1,4 +1,4 @@
-#include "philosophers.h"
+#include "../include/philosophers.h"
 
 int count_arg(char *arg, t_validation_func validate)
 {
@@ -59,7 +59,7 @@ int validate_and_get(char *arg, int *arr, t_validation_func validate)
       count++;
     }
     else
-      printf("-- Error on args %s\n", split_arg[i]);
+      return (printf("-- Error on args %s\n", split_arg[i]), -1);
     i++;
   }
   clean_matrix(split_arg);
@@ -68,11 +68,11 @@ int validate_and_get(char *arg, int *arr, t_validation_func validate)
 
 int *validate_argv(int argc, char **argv, t_validation_func validate, int *len)
 {
-  int *valid_args;
-  int valid_args_len;
-  int i;
-  int items_added;
-  int ret_value;
+  int	*valid_args;
+  int	valid_args_len;
+  int	i;
+  int	items_added;
+  int	ret_value;
 
   valid_args_len = count_valid_args(argc, argv, validate);
   if (valid_args_len == -1)

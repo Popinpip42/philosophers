@@ -1,4 +1,4 @@
-#include "philosophers.h"
+#include "../include/philosophers.h"
 
 t_node	*create_node(int *valid_args, int args_len, t_table *table)
 {
@@ -101,7 +101,7 @@ void  print_table(t_node *head)
 t_node  *create_table(int elements, int *valid_args, int args_len, t_table *table)
 {
   t_node  *head;
-  int     i;
+  //int     i;
 
   if (elements <= 0) //TODO: Add restriction: (<= 200; <= 250)
     return (NULL);

@@ -1,4 +1,21 @@
-#include "philosophers.h"
+#include "../include/philosophers.h"
+
+//==================================== AUXILIAR FUNCS
+void  print_eating_times(t_table *table, int id, long time, int times)
+{
+  pthread_mutex_lock(&table->print_mutex);
+  printf("!!!!!!!!!!!-----> %lu ID: %d has eaten %d times,\n", time - table->start_time, id, times);
+  printf("<------ Completed_count : %d, Deaths_count : %d ----->\n", table->completed_count, table->deaths_count);
+  pthread_mutex_unlock(&table->print_mutex);
+}
+
+void  print_death_reason(t_table *table, int id, long time, int times_to_eat)
+{
+  pthread_mutex_lock(&table->print_mutex);
+  printf("<-----DEATH REASON -----> %lu ID: %d, Deaths Counter %d, Times to Eat %d\n", time - table->start_time, id, table->deaths_count, times_to_eat);
+  pthread_mutex_unlock(&table->print_mutex);
+}
+//====================================
 
 long  get_time_ms()
 {
@@ -17,23 +34,6 @@ void  print_trace(t_table *table, int id, long time, char *msg)
   pthread_mutex_unlock(&table->print_mutex);
 }
 
-/*
-void  print_eating_times(t_table *table, int id, long time, int times)
-{
-  pthread_mutex_lock(&table->print_mutex);
-  printf("!!!!!!!!!!!-----> %lu ID: %d has eaten %d times,\n", time - table->start_time, id, times);
-  printf("<------ Completed_count : %d, Deaths_count : %d ----->\n", table->completed_count, table->deaths_count);
-  pthread_mutex_unlock(&table->print_mutex);
-}
-
-void  print_death_reason(t_table *table, int id, long time, int times_to_eat)
-{
-  pthread_mutex_lock(&table->print_mutex);
-  printf("<-----DEATH REASON -----> %lu ID: %d, Deaths Counter %d, Times to Eat %d\n", time - table->start_time, id, table->deaths_count, times_to_eat);
-  pthread_mutex_unlock(&table->print_mutex);
-}
-*/
-
 void  *philosopher_routine(void *arg)
 {
   t_node    *philo_data;
@@ -43,14 +43,17 @@ void  *philosopher_routine(void *arg)
   philo_data = (t_node *)arg;
   table = philo_data->table;
 
+  //TODO: test are all passed nicely.
+  //    BUT - We have a weird error when executing
+  //    philo 4 310 203 101
+  //    this happens bs a thread tries to access table when already freed
+  //    MIGHT NEED TO CHECK AT EVERY BRANCH IF (TABLE IS NOT NULL...)
   //ROUTINE : take forks, eat, release forks, sleep, think ->
   while (philo_data->is_alive)
   {
-    //Check if simulation ended
-    if (!table->simulation_state)
+    if (!table && !table->simulation_state)
       break;
 
-    // Check if philosopher has died
     elapsed_time = get_time_ms() - philo_data->last_meal_time;
     if (elapsed_time > (long)philo_data->time_to_die)
     {
@@ -72,7 +75,7 @@ void  *philosopher_routine(void *arg)
     {
       // Even ID: Pick up left fork first, then right fork
       pthread_mutex_lock(&philo_data->fork_mutex);
-      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      print_trace(table, philo_data->id, get_time_ms(), "has taken left fork");
       //CHECK IF THERE IS ONLY ONE PHILO
       if (table->n_philos == 1)
       {
@@ -85,13 +88,13 @@ void  *philosopher_routine(void *arg)
         break;
       }
       pthread_mutex_lock(&philo_data->next->fork_mutex);
-      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      print_trace(table, philo_data->id, get_time_ms(), "has taken right fork");
     }
     else
     {
       // Odd ID: Pick up right fork first, then left fork
       pthread_mutex_lock(&philo_data->next->fork_mutex);
-      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      print_trace(table, philo_data->id, get_time_ms(), "has taken right fork");
       //CHECK IF THERE IS ONLY ONE PHILO
       if (table->n_philos == 1)
       {
@@ -104,13 +107,14 @@ void  *philosopher_routine(void *arg)
         break;
       }
       pthread_mutex_lock(&philo_data->fork_mutex);
-      print_trace(table, philo_data->id, get_time_ms(), "has taken a fork");
+      print_trace(table, philo_data->id, get_time_ms(), "has taken left fork");
     }
 
     // Eating
-    print_trace(table, philo_data->id, get_time_ms(), "is eating");
+    long eating_time = get_time_ms();
+    print_trace(table, philo_data->id, eating_time , "is eating");
+    philo_data->last_meal_time = eating_time;
     usleep(philo_data->time_to_eat * 1000);
-    philo_data->last_meal_time = get_time_ms();
 
     // Release forks
     pthread_mutex_unlock(&philo_data->fork_mutex);
@@ -136,7 +140,7 @@ void  *philosopher_routine(void *arg)
 
     // Thinking
     print_trace(table, philo_data->id, get_time_ms(), "is thinking");
-    usleep(1000); // Simulate thinking
+    usleep(5 * 1000); // Simulate thinking
   }
 }
 
