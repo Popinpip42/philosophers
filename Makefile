@@ -7,7 +7,7 @@ SRC_DIR			=		./src
 SRCS				=		$(addprefix $(SRC_DIR)/, \
 								main.c \
 								create_table.c init_table.c \
-								simulation.c \
+								simulation.c simulation_utils.c \
 								split_on.c strings.c \
 								validate_argv.c validation_func.c )
 

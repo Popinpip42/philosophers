@@ -17,23 +17,6 @@ void  print_death_reason(t_table *table, int id, long time, int times_to_eat)
 }
 //====================================
 
-long  get_time_ms()
-{
-  struct timeval  tv;
-  long            res;
-
-  gettimeofday(&tv, NULL);
-  res = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000 ;
-  return (res);
-}
-
-void  print_trace(t_table *table, int id, long time, char *msg)
-{
-  pthread_mutex_lock(&table->print_mutex);
-  printf("!!!!==== %lu ID: %d %s\n", time - table->start_time, id, msg);
-  pthread_mutex_unlock(&table->print_mutex);
-}
-
 void  *philosopher_routine(void *arg)
 {
   t_node    *philo_data;
@@ -43,15 +26,9 @@ void  *philosopher_routine(void *arg)
   philo_data = (t_node *)arg;
   table = philo_data->table;
 
-  //TODO: test are all passed nicely.
-  //    BUT - We have a weird error when executing
-  //    philo 4 310 203 101
-  //    this happens bs a thread tries to access table when already freed
-  //    MIGHT NEED TO CHECK AT EVERY BRANCH IF (TABLE IS NOT NULL...)
-  //ROUTINE : take forks, eat, release forks, sleep, think ->
   while (philo_data->is_alive)
   {
-    if (!table && !table->simulation_state)
+    if (!table || !table->simulation_state)
       break;
 
     elapsed_time = get_time_ms() - philo_data->last_meal_time;
@@ -59,8 +36,6 @@ void  *philosopher_routine(void *arg)
     {
       print_trace(table, philo_data->id, get_time_ms(), " DIED\n");
       pthread_mutex_lock(&table->deaths_mutex);
-	//TODO: Should probably protect deaths_count look up with a mutex
-	// Should probably set "table->simulation_state = 0;" here instead at "monitor" while loop
       table->deaths_count++;
       printf("<------ Completed_count : %d, Deaths_count : %d ----->\n", table->completed_count, table->deaths_count);
       pthread_mutex_unlock(&table->deaths_mutex);
@@ -140,13 +115,11 @@ void  *philosopher_routine(void *arg)
 
     // Thinking
     print_trace(table, philo_data->id, get_time_ms(), "is thinking");
-    usleep(5 * 1000); // Simulate thinking
+    usleep(5 * 1000);
   }
+  return (NULL);
 }
 
-//TODO: Check if this works :D. it seems like it does.
-// - 1. check if deaths_count and completed_count variables need protectiong at look up.
-// - 2- Pass valgrind and hellgrind and leaks and test at ubuntu environment.
 void	run_simulation(t_node *head, t_table *table)
 {
   long      initial_time;
@@ -166,7 +139,7 @@ void	run_simulation(t_node *head, t_table *table)
     //printf("INIT thread with id %d\n", tmp->id);
     tmp->last_meal_time = table->start_time; //TODO: for first iteration only
     pthread_create(&philos_arr[m], NULL, &philosopher_routine, (void *)tmp);
-    pthread_detach(philos_arr[m]);
+    //pthread_detach(philos_arr[m]);
     tmp = tmp->next;
     m++;
   }
@@ -176,14 +149,12 @@ void	run_simulation(t_node *head, t_table *table)
   while (1)
   {
     //print_trace(table, -1, get_time_ms(), "=== from main_loop");
-	//TODO: Should probably protect deaths_count look up with a mutex
     if (table->deaths_count > 0 && head->times_to_eat == -1)
     {
       table->simulation_state = 0;
       //print_trace(table, -1, get_time_ms(), "finish due to times to eat -1 and one philo died");
       break ;
     }
-	//TODO: Should probably protect completed_count look up with a mutex
     if ((table->completed_count == table->n_philos && head->times_to_eat >= 0)
         || (table->deaths_count == table->n_philos && head->times_to_eat >= 0))
     {
@@ -193,5 +164,8 @@ void	run_simulation(t_node *head, t_table *table)
     }
   }
   print_trace(table, -1, get_time_ms(), "================= END =================\n");
-  //printf("================= END =================\n");
+  m = 0;
+  while (m < table->n_philos)
+    pthread_join(philos_arr[m++], NULL);
+  printf("================= REAL END =================\n");
 }

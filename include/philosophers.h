@@ -24,6 +24,7 @@ typedef struct s_table
   int             completed_count;
   int             simulation_state;
   //t_node          *philo_head_list;
+  pthread_mutex_t state_mutex;
   pthread_mutex_t deaths_mutex;
   pthread_mutex_t completed_mutex;
   pthread_mutex_t print_mutex;
@@ -43,9 +44,11 @@ struct s_node
   t_node          *next;
 };
 
-//Simulation Functions
-long	get_time_ms();
+// simulation.c
 void	run_simulation(t_node *head, t_table *table);
+// simulation_utils.c
+long	get_time_ms();
+void	print_trace(t_table *table, int id, long time, char *msg);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);
