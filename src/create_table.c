@@ -7,7 +7,6 @@ t_node	*create_node(int *valid_args, int args_len, t_table *table)
   new_node = (t_node *)malloc(sizeof(t_node));
   if (!new_node)
     return (NULL);
-  new_node->is_alive = 1;
   new_node->id = 1;
   new_node->last_meal_time = 0;
   new_node->time_to_die = valid_args[1];
@@ -77,7 +76,7 @@ void  print_node(t_node *node)
 {
   if (node == NULL)
     printf("Empty Node\n");
-  printf("Id : %d, Is_alive : %d, ", node->id, node->is_alive);
+  printf("Id : %d", node->id);
   printf("time_to_die : %d, time_to_eat : %d, time_to_sleep : %d, ", node->time_to_die, node->time_to_eat, node->time_to_sleep);
   printf("times_to_eat : %d, next_id : %d \n", node->times_to_eat, node->next->id);
   //printf("Table pointer %p\n", node->table);

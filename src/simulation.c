@@ -1,33 +1,9 @@
 #include "../include/philosophers.h"
 
-//==================================== AUXILIAR FUNCS
-void  print_eating_times(t_table *table, int id, long time, int times)
+static void	create_threads(pthread_t *philos_arr, t_node *head, t_table *table)
 {
-	pthread_mutex_lock(&table->print_mutex);
-	printf("!!!!!!!!!!!-----> %lu ID: %d has eaten %d times,\n", time - table->start_time, id, times);
-	printf("<------ Completed_count : %d, Deaths_count : %d ----->\n", table->completed_count, table->deaths_count);
-	pthread_mutex_unlock(&table->print_mutex);
-}
-
-void  print_death_reason(t_table *table, int id, long time, int times_to_eat)
-{
-	pthread_mutex_lock(&table->print_mutex);
-	printf("<-----DEATH REASON -----> %lu ID: %d, Deaths Counter %d, Times to Eat %d\n", time - table->start_time, id, table->deaths_count, times_to_eat);
-	pthread_mutex_unlock(&table->print_mutex);
-}
-//====================================
-
-//TODO: why would we use time_t instead of long?
-void	run_simulation(t_node *head, t_table *table)
-{
-	pthread_t	philos_arr[table->n_philos]; //TODO: malloc this
-	//pthread_t	*philos_arr; //TODO: malloc this
 	int			m;
 	t_node		*tmp;
-
-	//TODO: sync start time for monitor and philos threads
-	table->start_time = get_time_ms() + (table->n_philos * 2 * 10);
-	//printf("=== Table time start  in simulation() : %lu\n", table->start_time);
 
 	m = 0;
 	tmp = head;
@@ -38,28 +14,69 @@ void	run_simulation(t_node *head, t_table *table)
 		tmp = tmp->next;
 		m++;
 	}
+}
 
+static void	join_threads(pthread_t *philos_arr, int n)
+{
+	int	i;
 
+	i = 0;
+	while (i < n)
+	{
+		pthread_join(philos_arr[i], NULL);
+		i++;
+	}
+}
+
+static void	monitor_infinite(t_table *table)
+{
 	while (1)
 	{
-		//print_trace(table, -1, get_time_ms(), "=== from main_loop");
-		if (table->deaths_count > 0 && head->times_to_eat == -1)
+		if (get_deaths(table) > 0)
 		{
+			pthread_mutex_lock(&table->state_mutex);
 			table->simulation_state = 0;
-			//print_trace(table, -1, get_time_ms(), "finish due to times to eat -1 and one philo died");
+			pthread_mutex_unlock(&table->state_mutex);
 			break ;
 		}
-		if ((table->completed_count == table->n_philos && head->times_to_eat >= 0)
-			|| (table->deaths_count == table->n_philos && head->times_to_eat >= 0))
-		{
-			table->simulation_state = 0;
-			//print_trace(table, -1, get_time_ms(), "finish due to all died before full eating or they full");
-			break ;
-		}
+		usleep(1000);
 	}
+}
+
+static void	monitor_finite(t_table *table)
+{
+	while (1)
+	{
+		if (get_completed(table) == table->n_philos
+			|| get_deaths(table) == table->n_philos)
+		{
+			pthread_mutex_lock(&table->state_mutex);
+			table->simulation_state = 0;
+			pthread_mutex_unlock(&table->state_mutex);
+			break ;
+		}
+		usleep(1000);
+	}
+}
+
+void	run_simulation(t_node *head, t_table *table)
+{
+	pthread_t	*philos_arr;
+	long		times_to_eat;
+
+	philos_arr = malloc(sizeof(pthread_t) * table->n_philos);
+	if (!philos_arr)
+		return ;
+	table->start_time = get_time_ms() + (table->n_philos * 2 * 10);
+	create_threads(philos_arr, head, table);
+	start_delay(table->start_time);
+	times_to_eat = head->times_to_eat;
+	if (times_to_eat == -1)
+		monitor_infinite(table);
+	else
+		monitor_finite(table);
 	print_trace(table, -1, get_time_ms(), "================= END =================\n");
-	m = 0;
-	while (m < table->n_philos)
-		pthread_join(philos_arr[m++], NULL);
+	join_threads(philos_arr, table->n_philos);
+	free(philos_arr);
 	printf("================= REAL END =================\n");
 }

@@ -1,15 +1,5 @@
 #include "../include/philosophers.h"
 
-long	get_time_ms(void)
-{
-	struct timeval	tv;
-	long			res;
-
-	gettimeofday(&tv, NULL);
-	res = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-	return (res);
-}
-
 void	print_trace(t_table *table, int id, long time, char *msg)
 {
 	pthread_mutex_lock(&table->print_mutex);
@@ -17,10 +7,32 @@ void	print_trace(t_table *table, int id, long time, char *msg)
 	pthread_mutex_unlock(&table->print_mutex);
 }
 
-void	start_delay(long start_time)
+int	get_state(t_table *table)
 {
-	while (get_time_ms() < start_time)
-		continue ;
+	int	i_ret;
+
+	pthread_mutex_lock(&table->state_mutex);
+	i_ret = table->simulation_state;
+	pthread_mutex_unlock(&table->state_mutex);
+	return (i_ret);
 }
 
+int	get_completed(t_table *table)
+{
+	int	i_ret;
 
+	pthread_mutex_lock(&table->completed_mutex);
+	i_ret = table->completed_count;
+	pthread_mutex_unlock(&table->completed_mutex);
+	return (i_ret);
+}
+
+int	get_deaths(t_table *table)
+{
+	int	i_ret;
+
+	pthread_mutex_lock(&table->deaths_mutex);
+	i_ret = table->deaths_count;
+	pthread_mutex_unlock(&table->deaths_mutex);
+	return (i_ret);
+}

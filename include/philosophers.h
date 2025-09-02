@@ -32,7 +32,6 @@ typedef struct s_table
 
 struct s_node
 {
-	int             is_alive;
 	int             id;
 	long            last_meal_time;
 	int             time_to_die;
@@ -47,11 +46,23 @@ struct s_node
 // simulation.c
 void	run_simulation(t_node *head, t_table *table);
 // simulation_utils.c
-long	get_time_ms();
 void	print_trace(t_table *table, int id, long time, char *msg);
-void	start_delay(long start_time);
-// philo_run.c 
+int		get_state(t_table *table);
+int		get_completed(t_table *table);
+int		get_deaths(t_table *table);
+
+// philo_run.c
 void	*philosopher_routine(void *arg);
+// philo_run_utils.c
+void	add_death(t_table *table);
+void	add_completed_count(t_table *table);
+void	*one_philo_run(t_node *philo_data, t_table *table);
+int		check_death(t_node *philo, t_table *table);
+
+//time.c
+long	get_time_ms(void);
+void	start_delay(long start_time);
+void	ft_sleep(t_table *table, long time_to_sleep);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);
