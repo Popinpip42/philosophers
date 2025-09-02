@@ -1,29 +1,25 @@
-NAME				=		philo
+NAME			=		philo
 
 INC_DIR			=		./include
-HEADER_FILE	=		$(INC_DIR)/philosophers.h
-#LIBFT				=		libft
+HEADER_FILE		=		$(INC_DIR)/philosophers.h
 SRC_DIR			=		./src
-SRCS				=		$(addprefix $(SRC_DIR)/, \
-								main.c \
-								create_table.c init_table.c \
-								simulation.c simulation_utils.c \
-								philo_run.c philo_run_utils.c \
-								forks.c \
-								time.c \
-								split_on.c strings.c \
-								validate_argv.c validation_func.c )
+SRCS			=		$(addprefix $(SRC_DIR)/, \
+						main.c \
+						create_table.c init_table.c \
+						simulation.c simulation_utils.c \
+						philo_run.c philo_run_utils.c \
+						forks.c \
+						time.c \
+						split_on.c strings.c \
+						validate_argv.c validation_func.c )
 
 OBJ_DIR			=		./obj
-OBJS				=		$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJS			=		$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-#CFLAGS			=		-g -Wall -Wextra -Werror
-#CFLAGS			=		-g -O0 -Werror
+CFLAGS			=		-g -Wall -Wextra -Werror
 #CFLAGS			=		-g -fsanitize=address #-Wall -Wextra -Werror
-CFLAGS			=		-g
-#LDFLAGS			=		-lreadline -lhistory
 LDFLAGS			=		-lpthread
-CC					=		gcc
+CC				=		gcc
 
 all:	${NAME}
 

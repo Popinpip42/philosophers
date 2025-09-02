@@ -28,11 +28,11 @@ void	start_delay(long start_time)
 		continue ;
 }
 
-void	ft_sleep(t_table *table, long time_to_sleep)
+int	ft_sleep(t_table *table, long time_to_sleep)
 {
 	unsigned long	end;
 	unsigned long	now;
-	unsigned long	time_left;
+	long			remaining;
 
 	end = get_time_ms() + time_to_sleep;
 	while (get_state(table))
@@ -40,10 +40,11 @@ void	ft_sleep(t_table *table, long time_to_sleep)
 		now = get_time_ms();
 		if (now >= end)
 			break ;
-		time_left = end - now;
-		if (time_left > 2)
+		remaining = end - now;
+		if (remaining > 5)
 			usleep(1000);
 		else
-			usleep(100);
+			usleep(200);
 	}
+	return (!get_state(table));
 }

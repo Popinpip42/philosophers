@@ -56,13 +56,14 @@ struct s_node
 };
 
 // simulation.c
+void	print_trace(t_table *table, int id, long time, char *msg);
 void	run_simulation(t_node *head, t_table *table);
 // simulation_utils.c
-void	print_trace(t_table *table, int id, long time, char *msg);
 int		get_state(t_table *table);
-int		get_completed(t_table *table);
-int		get_deaths(t_table *table);
 int		get_times_to_eat(t_node *philo, t_table *table);
+void	create_threads(pthread_t *philos_arr, t_node *head, t_table *table);
+void	join_threads(pthread_t *philos_arr, int n);
+int		get_completed(t_table *table);
 
 // philo_run.c
 void	*philosopher_routine(void *arg);
@@ -79,7 +80,8 @@ int		philo_take_forks(t_node *philo, t_table *table);
 //time.c
 long	get_time_ms(void);
 void	start_delay(long start_time);
-void	ft_sleep(t_table *table, long time_to_sleep);
+//int		ft_sleep(t_node *philo, t_table *table, long time_to_sleep);
+int		ft_sleep(t_table *table, long time_to_sleep);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);

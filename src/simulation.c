@@ -12,61 +12,63 @@
 
 #include "../include/philosophers.h"
 
-static void	create_threads(pthread_t *philos_arr, t_node *head, t_table *table)
+void	print_trace(t_table *table, int id, long time, char *msg)
 {
-	int			m;
-	t_node		*tmp;
-
-	m = 0;
-	tmp = head;
-	while (m < table->n_philos)
-	{
-		pthread_create(&philos_arr[m], NULL, &philosopher_routine, (void *)tmp);
-		tmp = tmp->next;
-		m++;
-	}
+	pthread_mutex_lock(&table->print_mutex);
+	printf("%lu %d %s\n", time - table->start_time, id, msg);
+	pthread_mutex_unlock(&table->print_mutex);
 }
 
-static void	join_threads(pthread_t *philos_arr, int n)
+static int	check_philo_death(t_table *table, t_node *head)
 {
-	int	i;
+	t_node	*ph;
+	int		i;
+	long	elapsed;
 
+	ph = head;
 	i = 0;
-	while (i < n)
+	while (i < table->n_philos)
 	{
-		pthread_join(philos_arr[i], NULL);
+		elapsed = get_time_ms() - ph->last_meal_time;
+		if (elapsed > ph->time_to_die)
+		{
+			print_trace(table, ph->id, get_time_ms(), " DIED\n");
+			add_death(table);
+			pthread_mutex_lock(&table->state_mutex);
+			table->simulation_state = 0;
+			pthread_mutex_unlock(&table->state_mutex);
+			return (1);
+		}
+		ph = ph->next;
 		i++;
 	}
+	return (0);
 }
 
-static void	monitor_infinite(t_table *table)
+static void	monitor_infinite(t_table *table, t_node *head)
 {
-	while (1)
+	while (get_state(table))
 	{
-		if (get_deaths(table) > 0)
-		{
-			pthread_mutex_lock(&table->state_mutex);
-			table->simulation_state = 0;
-			pthread_mutex_unlock(&table->state_mutex);
-			break ;
-		}
-		usleep(1000);
+		if (check_philo_death(table, head))
+			return ;
+		usleep(500);
 	}
 }
 
-static void	monitor_finite(t_table *table)
+static void	monitor_finite(t_table *table, t_node *head)
 {
-	while (1)
+	while (get_state(table))
 	{
-		if (get_completed(table) == table->n_philos
-			|| get_deaths(table) == table->n_philos)
+		if (check_philo_death(table, head))
+			return ;
+		if (get_completed(table) == table->n_philos)
 		{
 			pthread_mutex_lock(&table->state_mutex);
 			table->simulation_state = 0;
 			pthread_mutex_unlock(&table->state_mutex);
-			break ;
+			return ;
 		}
-		usleep(1000);
+		usleep(500);
 	}
 }
 
@@ -83,10 +85,9 @@ void	run_simulation(t_node *head, t_table *table)
 	start_delay(table->start_time);
 	times_to_eat = get_times_to_eat(head, table);
 	if (times_to_eat == -1)
-		monitor_infinite(table);
+		monitor_infinite(table, head);
 	else
-		monitor_finite(table);
+		monitor_finite(table, head);
 	join_threads(philos_arr, table->n_philos);
 	free(philos_arr);
-	print_trace(table, -1, get_time_ms(), "== END ==\n");
 }
