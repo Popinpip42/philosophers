@@ -73,53 +73,26 @@ void	clear_list(t_node **head)
 	while (next != *head)
 	{
 		next = current->next;
-		printf("im going to free node id : %d\n", current->id);
 		pthread_mutex_destroy(&current->fork_mutex);
 		free(current);
 		current = next;
 	}
-	//printf("im going to free node id : %d\n", (*head)->id);
 	pthread_mutex_destroy(&(*head)->fork_mutex);
 	free(*head);
 	*head = NULL;
 }
 
-void	print_node(t_node *node)
-{
-	if (node == NULL)
-		printf("Empty Node\n");
-	printf("Id : %d", node->id);
-	printf("time_to_die : %d, time_to_eat : %d, time_to_sleep : %d, ", node->time_to_die, node->time_to_eat, node->time_to_sleep);
-	printf("times_to_eat : %d, next_id : %d \n", node->times_to_eat, node->next->id);
-	//printf("Table pointer %p\n", node->table);
-	//printf("Table n_philos %d\n", node->table->n_philos);
-}
-
-void	print_table(t_node *head)
-{
-	t_node	*current;
-
-	current = head;
-	print_node(current);
-	current = (t_node *)current->next;
-	while (current != head)
-	{
-		print_node(current);
-		current = current->next;
-	}
-}
-
-t_node	*create_table(int elements, int *valid_args, int args_len, t_table *table)
+t_node	*create_table(int count, int *valid_args, int args_len, t_table *table)
 {
 	t_node	*head;
 
-	if (elements <= 0)
+	if (count <= 0)
 		return (NULL);
 	head = create_node(valid_args, args_len, table);
 	if (!head)
 		return (NULL);
-	elements--;
-	while (elements--)
+	count--;
+	while (count--)
 	{
 		if (!add_node_back(head, create_node(valid_args, args_len, table)))
 			return (clear_list(&head), NULL);

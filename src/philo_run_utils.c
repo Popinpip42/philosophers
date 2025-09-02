@@ -23,8 +23,6 @@ void	add_completed_count(t_table *table)
 {
 	pthread_mutex_lock(&table->completed_mutex);
 	table->completed_count++;
-	//printf("<------ Completed_count : %d, Deaths_count : %d ----->\n",
-	//	table->completed_count, table->deaths_count);
 	pthread_mutex_unlock(&table->completed_mutex);
 }
 
@@ -37,8 +35,6 @@ int	check_death(t_node *philo, t_table *table)
 	{
 		print_trace(table, philo->id, get_time_ms(), " DIED\n");
 		add_death(table);
-		//printf("<------ Completed_count : %d, Deaths_count : %d ----->\n",
-		//	table->completed_count, table->deaths_count);
 		return (1);
 	}
 	return (0);

@@ -21,7 +21,6 @@ static void	create_threads(pthread_t *philos_arr, t_node *head, t_table *table)
 	tmp = head;
 	while (m < table->n_philos)
 	{
-		//printf("INIT thread with id %d\n", tmp->id);
 		pthread_create(&philos_arr[m], NULL, &philosopher_routine, (void *)tmp);
 		tmp = tmp->next;
 		m++;
@@ -82,12 +81,12 @@ void	run_simulation(t_node *head, t_table *table)
 	table->start_time = get_time_ms() + (table->n_philos * 2 * 10);
 	create_threads(philos_arr, head, table);
 	start_delay(table->start_time);
-	times_to_eat = head->times_to_eat;
+	times_to_eat = get_times_to_eat(head, table);
 	if (times_to_eat == -1)
 		monitor_infinite(table);
 	else
 		monitor_finite(table);
 	join_threads(philos_arr, table->n_philos);
 	free(philos_arr);
-	print_trace(table, -1, get_time_ms(), "================= END =================\n");
+	print_trace(table, -1, get_time_ms(), "== END ==\n");
 }

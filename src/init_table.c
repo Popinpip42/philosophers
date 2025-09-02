@@ -31,6 +31,8 @@ t_table	*init_table(int n_philos)
 		return (NULL);
 	if (pthread_mutex_init(&new_table->completed_mutex, NULL) != 0)
 		return (NULL);
+	if (pthread_mutex_init(&new_table->times_to_eat_mutex, NULL) != 0)
+		return (NULL);
 	return (new_table);
 }
 
@@ -40,6 +42,7 @@ void	clear_table(t_table **table)
 	pthread_mutex_destroy(&(*table)->print_mutex);
 	pthread_mutex_destroy(&(*table)->deaths_mutex);
 	pthread_mutex_destroy(&(*table)->completed_mutex);
+	pthread_mutex_destroy(&(*table)->times_to_eat_mutex);
 	free(*table);
 	*table = NULL;
 }

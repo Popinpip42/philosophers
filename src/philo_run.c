@@ -12,45 +12,6 @@
 
 #include "../include/philosophers.h"
 
-static void	set_fork_order(t_node *philo, pthread_mutex_t **first,
-						pthread_mutex_t **second)
-{
-	if (&philo->fork_mutex < &philo->next->fork_mutex)
-	{
-		*first = &philo->fork_mutex;
-		*second = &philo->next->fork_mutex;
-	}
-	else
-	{
-		*first = &philo->next->fork_mutex;
-		*second = &philo->fork_mutex;
-	}
-}
-
-static int	philo_take_forks(t_node *philo, t_table *table)
-{
-	pthread_mutex_t	*first_fork;
-	pthread_mutex_t	*second_fork;
-
-	set_fork_order(philo, &first_fork, &second_fork);
-	pthread_mutex_lock(first_fork);
-	if (!get_state(table))
-	{
-		pthread_mutex_unlock(first_fork);
-		return (1);
-	}
-	pthread_mutex_lock(second_fork);
-	if (!get_state(table))
-	{
-		pthread_mutex_unlock(second_fork);
-		pthread_mutex_unlock(first_fork);
-		return (1);
-	}
-	print_trace(table, philo->id, get_time_ms(), "has taken left fork");
-	print_trace(table, philo->id, get_time_ms(), "has taken right fork");
-	return (0);
-}
-
 static int	philo_eat(t_node *philo, t_table *table)
 {
 	if (!get_state(table))
@@ -60,26 +21,22 @@ static int	philo_eat(t_node *philo, t_table *table)
 	ft_sleep(table, philo->time_to_eat);
 	if (get_state(table) && philo->times_to_eat != -1)
 	{
+		pthread_mutex_lock(&table->times_to_eat_mutex);
 		philo->times_to_eat--;
-		//printf("<------ ID: %d times_to_eat : %d, Deaths_count : %d ----->\n",
-		//	philo->id, philo->times_to_eat, table->deaths_count);
-		if (philo->times_to_eat == 0)
+		pthread_mutex_unlock(&table->times_to_eat_mutex);
+		if (get_times_to_eat(philo, table) == 0)
 		{
 			add_completed_count(table);
-			pthread_mutex_unlock(&philo->fork_mutex);
-			pthread_mutex_unlock(&philo->next->fork_mutex);
+			drop_forks(philo);
 			return (1);
 		}
 	}
-	pthread_mutex_unlock(&philo->fork_mutex);
-	pthread_mutex_unlock(&philo->next->fork_mutex);
+	drop_forks(philo);
 	return (0);
 }
 
 static void	philo_sleep(t_node *philo, t_table *table)
 {
-	if (!get_state(table))
-		return ;
 	print_trace(table, philo->id, get_time_ms(), "is sleeping");
 	ft_sleep(table, philo->time_to_sleep);
 }
@@ -88,8 +45,6 @@ static void	philo_think(t_node *philo, t_table *table, int silent)
 {
 	long	time_to_think;
 
-	if (!get_state(table))
-		return ;
 	time_to_think = (philo->time_to_die
 			- (get_time_ms() - philo->last_meal_time)
 			- philo->time_to_eat) / 2;
@@ -100,12 +55,17 @@ static void	philo_think(t_node *philo, t_table *table, int silent)
 	if (time_to_think > 600)
 		time_to_think = 200;
 	if (!silent)
-	{
-		if (!get_state(table))
-			return ;
 		print_trace(table, philo->id, get_time_ms(), "is thinking");
-	}
 	ft_sleep(table, time_to_think);
+}
+
+static int	take_forks_eat(t_node *philo, t_table *table)
+{
+	if (philo_take_forks(philo, table))
+		return (1);
+	if (philo_eat(philo, table))
+		return (1);
+	return (0);
 }
 
 void	*philosopher_routine(void *arg)
@@ -119,17 +79,19 @@ void	*philosopher_routine(void *arg)
 	start_delay(table->start_time);
 	if (table->n_philos == 1)
 		return (one_philo_run(philo, table));
-	else if (philo->id % 2)
-		philo_think(philo, table, 1);
+	else if (philo->id % 2 == 0)
+		usleep(2000);
 	while (get_state(table))
 	{
 		if (check_death(philo, table))
 			break ;
-		if (philo_take_forks(philo, table))
+		if (take_forks_eat(philo, table))
 			break ;
-		if (philo_eat(philo, table))
+		if (!get_state(table))
 			break ;
 		philo_sleep(philo, table);
+		if (!get_state(table))
+			break ;
 		philo_think(philo, table, 0);
 	}
 	return (NULL);

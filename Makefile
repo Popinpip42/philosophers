@@ -9,6 +9,7 @@ SRCS				=		$(addprefix $(SRC_DIR)/, \
 								create_table.c init_table.c \
 								simulation.c simulation_utils.c \
 								philo_run.c philo_run_utils.c \
+								forks.c \
 								time.c \
 								split_on.c strings.c \
 								validate_argv.c validation_func.c )

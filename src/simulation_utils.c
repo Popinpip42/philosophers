@@ -48,3 +48,13 @@ int	get_deaths(t_table *table)
 	pthread_mutex_unlock(&table->deaths_mutex);
 	return (i_ret);
 }
+
+int	get_times_to_eat(t_node *philo, t_table *table)
+{
+	int	i_ret;
+
+	pthread_mutex_lock(&table->times_to_eat_mutex);
+	i_ret = philo->times_to_eat;
+	pthread_mutex_unlock(&table->times_to_eat_mutex);
+	return (i_ret);
+}

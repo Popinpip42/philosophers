@@ -71,7 +71,7 @@ int	validate_and_get(char *arg, int *arr, t_validation_func validate)
 			count++;
 		}
 		else
-			return (printf("-- Error on args %s\n", split_arg[i]), -1);
+			return (printf("--- Invalid argument %s\n", split_arg[i]), -1);
 		i++;
 	}
 	clean_matrix(split_arg);

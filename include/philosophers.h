@@ -28,6 +28,7 @@ typedef struct s_table
 	pthread_mutex_t deaths_mutex;
 	pthread_mutex_t completed_mutex;
 	pthread_mutex_t print_mutex;
+	pthread_mutex_t times_to_eat_mutex;
 }	t_table;
 
 struct s_node
@@ -50,6 +51,7 @@ void	print_trace(t_table *table, int id, long time, char *msg);
 int		get_state(t_table *table);
 int		get_completed(t_table *table);
 int		get_deaths(t_table *table);
+int		get_times_to_eat(t_node *philo, t_table *table);
 
 // philo_run.c
 void	*philosopher_routine(void *arg);
@@ -58,6 +60,10 @@ void	add_death(t_table *table);
 void	add_completed_count(t_table *table);
 void	*one_philo_run(t_node *philo_data, t_table *table);
 int		check_death(t_node *philo, t_table *table);
+
+//forks.c
+void	drop_forks(t_node *philo);
+int		philo_take_forks(t_node *philo, t_table *table);
 
 //time.c
 long	get_time_ms(void);
