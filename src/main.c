@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 12:39:37 by lsirpa-g          #+#    #+#             */
+/*   Updated: 2025/09/02 12:39:38 by lsirpa-g         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/philosophers.h"
 
 void	print_int_arr(int *arr, int len)
@@ -17,7 +29,6 @@ void  print_usage_msg()
 	printf("==== (Only Positve numbers allowed) \n");
 }
 
-//TODO: to free: valid_argv / table / head
 int	main(int argc, char **argv)
 {
 	t_table	*table;
@@ -54,7 +65,6 @@ int	main(int argc, char **argv)
 	}
 	run_simulation(head, table);
 	//printf("=== Table time start  in main() : %lu\n", table->start_time);
-
 	clear_list(&head);
 	//table->philo_head_list = NULL;
 	if (head == NULL)

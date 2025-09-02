@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   strings.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 12:40:28 by lsirpa-g          #+#    #+#             */
+/*   Updated: 2025/09/02 12:40:28 by lsirpa-g         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/philosophers.h"
 
 size_t	ft_strlen(const char *s)
@@ -36,13 +48,13 @@ int	ft_atoi(const char *str)
 	sign = 1;
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;
-  while (*str == '+' || *str == '-')
-  {
-    if (*str == '-')
-      sign *= -1;
-    str++;
-  }
-  num = 0;
+	while (*str == '+' || *str == '-')
+	{
+		if (*str == '-')
+			sign *= -1;
+		str++;
+	}
+	num = 0;
 	while (*str >= '0' && *str <= '9')
 	{
 		num = num * 10 + (*str - '0');

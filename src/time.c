@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 12:40:36 by lsirpa-g          #+#    #+#             */
+/*   Updated: 2025/09/02 12:40:37 by lsirpa-g         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/philosophers.h"
 
 long	get_time_ms(void)
@@ -12,10 +24,8 @@ long	get_time_ms(void)
 
 void	start_delay(long start_time)
 {
-	//printf("%s\n", __FUNCTION__);
 	while (get_time_ms() < start_time)
 		continue ;
-	//printf("%s line : %d\n", __FUNCTION__, __LINE__);
 }
 
 void	ft_sleep(t_table *table, long time_to_sleep)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   simulation.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 12:39:57 by lsirpa-g          #+#    #+#             */
+/*   Updated: 2025/09/02 12:39:57 by lsirpa-g         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/philosophers.h"
 
 static void	create_threads(pthread_t *philos_arr, t_node *head, t_table *table)
@@ -75,8 +87,7 @@ void	run_simulation(t_node *head, t_table *table)
 		monitor_infinite(table);
 	else
 		monitor_finite(table);
-	print_trace(table, -1, get_time_ms(), "================= END =================\n");
 	join_threads(philos_arr, table->n_philos);
 	free(philos_arr);
-	printf("================= REAL END =================\n");
+	print_trace(table, -1, get_time_ms(), "================= END =================\n");
 }
