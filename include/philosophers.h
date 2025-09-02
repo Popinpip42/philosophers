@@ -18,30 +18,30 @@ typedef struct s_node t_node;
 
 typedef struct s_table
 {
-  int             n_philos;
-  long            start_time;
-  int             deaths_count;
-  int             completed_count;
-  int             simulation_state;
-  //t_node          *philo_head_list;
-  pthread_mutex_t state_mutex;
-  pthread_mutex_t deaths_mutex;
-  pthread_mutex_t completed_mutex;
-  pthread_mutex_t print_mutex;
+	int             n_philos;
+	long            start_time;
+	int             deaths_count;
+	int             completed_count;
+	int             simulation_state;
+	//t_node          *philo_head_list;
+	pthread_mutex_t state_mutex;
+	pthread_mutex_t deaths_mutex;
+	pthread_mutex_t completed_mutex;
+	pthread_mutex_t print_mutex;
 }	t_table;
 
 struct s_node
 {
-  int             is_alive;
-  int             id;
-  long            last_meal_time;
-  int             time_to_die;
-  int             time_to_eat;
-  int             time_to_sleep;
-  int             times_to_eat; //This value is set to (-1) if 5th arg is not defined, we run simulation infinetly
-  pthread_mutex_t fork_mutex;
-  t_table         *table;
-  t_node          *next;
+	int             is_alive;
+	int             id;
+	long            last_meal_time;
+	int             time_to_die;
+	int             time_to_eat;
+	int             time_to_sleep;
+	int             times_to_eat; //This value is set to (-1) if 5th arg is not defined, we run simulation infinetly
+	pthread_mutex_t fork_mutex;
+	t_table         *table;
+	t_node          *next;
 };
 
 // simulation.c
@@ -49,6 +49,9 @@ void	run_simulation(t_node *head, t_table *table);
 // simulation_utils.c
 long	get_time_ms();
 void	print_trace(t_table *table, int id, long time, char *msg);
+void	start_delay(long start_time);
+// philo_run.c 
+void	*philosopher_routine(void *arg);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);

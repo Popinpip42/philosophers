@@ -17,4 +17,10 @@ void	print_trace(t_table *table, int id, long time, char *msg)
 	pthread_mutex_unlock(&table->print_mutex);
 }
 
+void	start_delay(long start_time)
+{
+	while (get_time_ms() < start_time)
+		continue ;
+}
+
 

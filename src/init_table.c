@@ -25,9 +25,9 @@ t_table	*init_table(int n_philos)
 void    clear_table(t_table **table)
 {
   pthread_mutex_destroy(&(*table)->state_mutex);
+  pthread_mutex_destroy(&(*table)->print_mutex);
   pthread_mutex_destroy(&(*table)->deaths_mutex);
   pthread_mutex_destroy(&(*table)->completed_mutex);
-  pthread_mutex_destroy(&(*table)->print_mutex);
   free(*table);
   *table = NULL;
 }
