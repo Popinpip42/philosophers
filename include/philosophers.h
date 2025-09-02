@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 20:31:00 by lsirpa-g          #+#    #+#             */
+/*   Updated: 2025/09/02 20:31:02 by lsirpa-g         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
@@ -5,43 +17,42 @@
 # include <pthread.h>
 # include <stdlib.h>
 # include <string.h>
-# include <ctype.h> //Currently using for isspace()
-# include <limits.h> //Currently using for INT_MAX/MIN
-# include <sys/time.h> //gettimeofday()
-# include <unistd.h> //usleep()
+# include <ctype.h>
+# include <limits.h>
+# include <sys/time.h>
+# include <unistd.h>
 
-typedef int (*t_validation_func)(const char *);
-typedef int (*t_is_separator)(int);
-typedef int (*t_filter_func)(int, int *, int);
+typedef int				(*t_validation_func)(const char *);
+typedef int				(*t_is_separator)(int);
+typedef int				(*t_filter_func)(int, int *, int);
 
-typedef struct s_node t_node;
+typedef struct s_node	t_node;
 
 typedef struct s_table
 {
-	int             n_philos;
-	long            start_time;
-	int             deaths_count;
-	int             completed_count;
-	int             simulation_state;
-	//t_node          *philo_head_list;
-	pthread_mutex_t state_mutex;
-	pthread_mutex_t deaths_mutex;
-	pthread_mutex_t completed_mutex;
-	pthread_mutex_t print_mutex;
-	pthread_mutex_t times_to_eat_mutex;
+	int				n_philos;
+	long			start_time;
+	int				deaths_count;
+	int				completed_count;
+	int				simulation_state;
+	pthread_mutex_t	state_mutex;
+	pthread_mutex_t	deaths_mutex;
+	pthread_mutex_t	completed_mutex;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	times_to_eat_mutex;
 }	t_table;
 
 struct s_node
 {
-	int             id;
-	long            last_meal_time;
-	int             time_to_die;
-	int             time_to_eat;
-	int             time_to_sleep;
-	int             times_to_eat; //This value is set to (-1) if 5th arg is not defined, we run simulation infinetly
-	pthread_mutex_t fork_mutex;
-	t_table         *table;
-	t_node          *next;
+	int				id;
+	long			last_meal_time;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				times_to_eat;
+	pthread_mutex_t	fork_mutex;
+	t_table			*table;
+	t_node			*next;
 };
 
 // simulation.c
@@ -72,7 +83,7 @@ void	ft_sleep(t_table *table, long time_to_sleep);
 
 //Core Functions
 //t_node  *create_table(int elements, int *valid_args, t_table *table);
-t_node	*create_table(int elements, int *valid_args, int args_len, t_table *table);
+t_node	*create_table(int count, int *valid_args, int args_len, t_table *table);
 t_table	*init_table(int n_philos);
 void	clear_table(t_table **table);
 
@@ -83,7 +94,8 @@ void	print_table(t_node *head);
 
 //Validation
 //int *validate_argv(int argc, char **argv, t_validation_func validate);
-int		*validate_argv(int argc, char **argv, t_validation_func validate, int *len);
+int		*validate_argv(int argc, char **argv,
+			t_validation_func validate, int *len);
 
 //Validation Func
 int		is_overflowing(long result, int digit, int sign);
