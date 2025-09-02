@@ -18,10 +18,11 @@ OBJS				=		$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 #CFLAGS			=		-g -Wall -Wextra -Werror
 #CFLAGS			=		-g -O0 -Werror
-CFLAGS			=		-g -fsanitize=address #-Wall -Wextra -Werror
+#CFLAGS			=		-g -fsanitize=address #-Wall -Wextra -Werror
+CFLAGS			=		-g
 #LDFLAGS			=		-lreadline -lhistory
-LDFLAGS			=		
-CC					=		cc
+LDFLAGS			=		-lpthread
+CC					=		gcc
 
 all:	${NAME}
 

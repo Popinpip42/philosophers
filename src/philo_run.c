@@ -12,12 +12,43 @@
 
 #include "../include/philosophers.h"
 
-static void	philo_take_forks(t_node *philo, t_table *table)
+static void	set_fork_order(t_node *philo, pthread_mutex_t **first,
+						pthread_mutex_t **second)
 {
-	pthread_mutex_lock(&philo->fork_mutex);
+	if (&philo->fork_mutex < &philo->next->fork_mutex)
+	{
+		*first = &philo->fork_mutex;
+		*second = &philo->next->fork_mutex;
+	}
+	else
+	{
+		*first = &philo->next->fork_mutex;
+		*second = &philo->fork_mutex;
+	}
+}
+
+static int	philo_take_forks(t_node *philo, t_table *table)
+{
+	pthread_mutex_t	*first_fork;
+	pthread_mutex_t	*second_fork;
+
+	set_fork_order(philo, &first_fork, &second_fork);
+	pthread_mutex_lock(first_fork);
+	if (!get_state(table))
+	{
+		pthread_mutex_unlock(first_fork);
+		return (1);
+	}
+	pthread_mutex_lock(second_fork);
+	if (!get_state(table))
+	{
+		pthread_mutex_unlock(second_fork);
+		pthread_mutex_unlock(first_fork);
+		return (1);
+	}
 	print_trace(table, philo->id, get_time_ms(), "has taken left fork");
-	pthread_mutex_lock(&philo->next->fork_mutex);
 	print_trace(table, philo->id, get_time_ms(), "has taken right fork");
+	return (0);
 }
 
 static int	philo_eat(t_node *philo, t_table *table)
@@ -94,7 +125,8 @@ void	*philosopher_routine(void *arg)
 	{
 		if (check_death(philo, table))
 			break ;
-		philo_take_forks(philo, table);
+		if (philo_take_forks(philo, table))
+			break ;
 		if (philo_eat(philo, table))
 			break ;
 		philo_sleep(philo, table);

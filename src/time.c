@@ -30,13 +30,20 @@ void	start_delay(long start_time)
 
 void	ft_sleep(t_table *table, long time_to_sleep)
 {
-	long	wake_up;
+	unsigned long	end;
+	unsigned long	now;
+	unsigned long	time_left;
 
-	wake_up = get_time_ms() + time_to_sleep;
-	while (get_time_ms() < wake_up)
+	end = get_time_ms() + time_to_sleep;
+	while (get_state(table))
 	{
-		if (!get_state(table))
+		now = get_time_ms();
+		if (now >= end)
 			break ;
-		usleep(100);
+		time_left = end - now;
+		if (time_left > 2)
+			usleep(1000);
+		else
+			usleep(100);
 	}
 }
