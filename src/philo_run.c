@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_run.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: anruiz-d <anruiz-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 12:39:44 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:39:45 by lsirpa-g         ###   ########.fr       */
+/*   Updated: 2025/09/03 02:12:27 by anruiz-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ static int	philo_eat(t_node *philo, t_table *table)
 {
 	if (!get_state(table))
 		return (drop_forks(philo), 1);
+	pthread_mutex_lock(&table->times_to_eat_mutex);
 	philo->last_meal_time = get_time_ms();
 	print_trace(table, philo->id, philo->last_meal_time, "is eating");
+	pthread_mutex_unlock(&table->times_to_eat_mutex);
 	if (ft_sleep(table, philo->time_to_eat))
 		return (drop_forks(philo), 1);
 	if (get_state(table) && philo->times_to_eat != -1)
@@ -52,9 +54,11 @@ static int	philo_think(t_node *philo, t_table *table, int silent)
 
 	if (!get_state(table))
 		return (1);
+	pthread_mutex_lock(&table->times_to_eat_mutex);
 	time_to_think = (philo->time_to_die
 			- (get_time_ms() - philo->last_meal_time)
 			- philo->time_to_eat) / 2;
+	pthread_mutex_unlock(&table->times_to_eat_mutex);
 	if (time_to_think < 0)
 		time_to_think = 0;
 	if (time_to_think == 0 && silent)
@@ -84,12 +88,14 @@ void	*philosopher_routine(void *arg)
 
 	philo = (t_node *)arg;
 	table = philo->table;
+	pthread_mutex_lock(&table->times_to_eat_mutex);
 	philo->last_meal_time = table->start_time;
+	pthread_mutex_unlock(&table->times_to_eat_mutex);
 	start_delay(table->start_time);
 	if (table->n_philos == 1)
 		return (one_philo_run(philo, table));
 	else if (philo->id % 2 == 0)
-		philo_think(philo, table, 1);
+		usleep(2000);	
 	while (get_state(table))
 	{
 		if (take_forks_eat(philo, table))

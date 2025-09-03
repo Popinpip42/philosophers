@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: anruiz-d <anruiz-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 12:39:57 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:39:57 by lsirpa-g         ###   ########.fr       */
+/*   Updated: 2025/09/03 01:53:05 by anruiz-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ static int	check_philo_death(t_table *table, t_node *head)
 	i = 0;
 	while (i < table->n_philos)
 	{
+		pthread_mutex_lock(&table->times_to_eat_mutex);
 		elapsed = get_time_ms() - ph->last_meal_time;
+		pthread_mutex_unlock(&table->times_to_eat_mutex);
 		if (elapsed > ph->time_to_die)
 		{
-			print_trace(table, ph->id, get_time_ms(), " DIED\n");
-			add_death(table);
 			pthread_mutex_lock(&table->state_mutex);
 			table->simulation_state = 0;
 			pthread_mutex_unlock(&table->state_mutex);
+			print_trace(table, ph->id, get_time_ms(), " DIED\n");
 			return (1);
 		}
 		ph = ph->next;
@@ -59,8 +60,6 @@ static void	monitor_finite(t_table *table, t_node *head)
 {
 	while (get_state(table))
 	{
-		if (check_philo_death(table, head))
-			return ;
 		if (get_completed(table) == table->n_philos)
 		{
 			pthread_mutex_lock(&table->state_mutex);
@@ -68,6 +67,8 @@ static void	monitor_finite(t_table *table, t_node *head)
 			pthread_mutex_unlock(&table->state_mutex);
 			return ;
 		}
+		if (check_philo_death(table, head))
+			return ;
 		usleep(500);
 	}
 }

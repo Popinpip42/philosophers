@@ -6,7 +6,7 @@
 /*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 12:40:36 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:40:37 by lsirpa-g         ###   ########.fr       */
+/*   Updated: 2025/09/03 01:15:15 by anruiz-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ int	ft_sleep(t_table *table, long time_to_sleep)
 		if (now >= end)
 			break ;
 		remaining = end - now;
-		if (remaining > 5)
+		if (remaining > 2)
 			usleep(1000);
 		else
-			usleep(200);
+			usleep(100);
 	}
 	return (!get_state(table));
 }
