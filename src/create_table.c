@@ -69,6 +69,7 @@ void	clear_list(t_node **head)
 		*head = NULL;
 		return ;
 	}
+	next = NULL;
 	current = (*head)->next;
 	while (next != *head)
 	{

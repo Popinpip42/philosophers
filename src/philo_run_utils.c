@@ -12,13 +12,6 @@
 
 #include "../include/philosophers.h"
 
-void	add_death(t_table *table)
-{
-	pthread_mutex_lock(&table->deaths_mutex);
-	table->deaths_count++;
-	pthread_mutex_unlock(&table->deaths_mutex);
-}
-
 void	add_completed_count(t_table *table)
 {
 	pthread_mutex_lock(&table->completed_mutex);
@@ -32,7 +25,6 @@ void	*one_philo_run(t_node *philo_data, t_table *table)
 	print_trace(table, philo_data->id, get_time_ms(), "has taken fork");
 	ft_sleep(table, philo_data->time_to_die);
 	print_trace(table, philo_data->id, get_time_ms(), "died\n");
-	add_death(table);
 	pthread_mutex_unlock(&philo_data->fork_mutex);
 	return (NULL);
 }

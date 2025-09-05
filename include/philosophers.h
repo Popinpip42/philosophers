@@ -32,11 +32,9 @@ typedef struct s_table
 {
 	int				n_philos;
 	long			start_time;
-	int				deaths_count;
 	int				completed_count;
 	int				simulation_state;
 	pthread_mutex_t	state_mutex;
-	pthread_mutex_t	deaths_mutex;
 	pthread_mutex_t	completed_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	times_to_eat_mutex;
@@ -68,7 +66,6 @@ int		get_completed(t_table *table);
 // philo_run.c
 void	*philosopher_routine(void *arg);
 // philo_run_utils.c
-void	add_death(t_table *table);
 void	add_completed_count(t_table *table);
 void	*one_philo_run(t_node *philo_data, t_table *table);
 int		check_death(t_node *philo, t_table *table);

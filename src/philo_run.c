@@ -95,7 +95,7 @@ void	*philosopher_routine(void *arg)
 	if (table->n_philos == 1)
 		return (one_philo_run(philo, table));
 	else if (philo->id % 2 == 0)
-		usleep(2000);	
+		usleep(2000);
 	while (get_state(table))
 	{
 		if (take_forks_eat(philo, table))
