@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   create_table.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 12:39:19 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:39:20 by lsirpa-g         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../include/philo_bonus.h"
 
-#include "../include/philosophers.h"
-
-t_node	*create_node(int *valid_args, int args_len, t_table *table)
+static t_node	*create_node(int *valid_args, int args_len, t_table *table)
 {
 	t_node	*new_node;
 
@@ -30,12 +18,10 @@ t_node	*create_node(int *valid_args, int args_len, t_table *table)
 		new_node->times_to_eat = -1;
 	new_node->table = table;
 	new_node->next = new_node;
-	if (pthread_mutex_init(&new_node->fork_mutex, NULL) != 0)
-		return (NULL);
 	return (new_node);
 }
 
-int	add_node_back(t_node *head, t_node *new_node)
+static int	add_node_back(t_node *head, t_node *new_node)
 {
 	t_node	*tmp;
 	int		i;
@@ -64,7 +50,6 @@ void	clear_list(t_node **head)
 		return ;
 	if ((*head)->next == *head)
 	{
-		pthread_mutex_destroy(&(*head)->fork_mutex);
 		free(*head);
 		*head = NULL;
 		return ;
@@ -74,11 +59,9 @@ void	clear_list(t_node **head)
 	while (next != *head)
 	{
 		next = current->next;
-		pthread_mutex_destroy(&current->fork_mutex);
 		free(current);
 		current = next;
 	}
-	pthread_mutex_destroy(&(*head)->fork_mutex);
 	free(*head);
 	*head = NULL;
 }

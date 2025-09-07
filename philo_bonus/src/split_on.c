@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   split_on.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 12:40:19 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:40:20 by lsirpa-g         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../include/philosophers.h"
+#include "../include/philo_bonus.h"
 
 int	count_words(const char *s, t_is_separator is_separator)
 {
@@ -62,6 +50,7 @@ char	**clean_matrix(char **matrix)
 		i++;
 	}
 	free(matrix);
+	matrix = NULL;
 	return (NULL);
 }
 

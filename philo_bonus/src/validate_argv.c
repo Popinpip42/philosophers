@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   validate_argv.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 12:40:46 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:40:46 by lsirpa-g         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../include/philo_bonus.h"
 
-#include "../include/philosophers.h"
-
-int	count_arg(char *arg, t_validation_func validate)
+static int	count_arg(char *arg, t_validation_func validate)
 {
 	int		count;
 	int		i;
@@ -33,7 +21,7 @@ int	count_arg(char *arg, t_validation_func validate)
 	return (count);
 }
 
-int	count_valid_args(int argc, char **argv, t_validation_func validate)
+static int	count_valid_args(int argc, char **argv, t_validation_func validate)
 {
 	int	total_count;
 	int	num;
@@ -52,7 +40,7 @@ int	count_valid_args(int argc, char **argv, t_validation_func validate)
 	return (total_count);
 }
 
-int	validate_and_get(char *arg, int *arr, t_validation_func validate)
+static int	validate_and_get(char *arg, int *arr, t_validation_func validate)
 {
 	char	**split_arg;
 	int		count;

@@ -1,17 +1,14 @@
-NAME			=		philo
+NAME			=		philo_bonus
 
 INC_DIR			=		./include
-HEADER_FILE		=		$(INC_DIR)/philosophers.h
+HEADER_FILE		=		$(INC_DIR)/philo_bonus.h
 SRC_DIR			=		./src
 SRCS			=		$(addprefix $(SRC_DIR)/, \
 						main.c \
 						create_table.c init_table.c \
-						simulation.c simulation_utils.c \
-						philo_run.c philo_run_utils.c \
-						forks.c \
 						time.c \
 						split_on.c strings.c \
-						validate_argv.c validation_func.c )
+						validate_argv.c validate_func.c )
 
 OBJ_DIR			=		./obj
 OBJS			=		$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

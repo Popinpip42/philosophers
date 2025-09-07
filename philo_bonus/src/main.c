@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lsirpa-g <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 12:39:37 by lsirpa-g          #+#    #+#             */
-/*   Updated: 2025/09/02 12:39:38 by lsirpa-g         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../include/philosophers.h"
+#include "../include/philo_bonus.h"
 
 void	print_usage_msg(void)
 {
@@ -51,7 +39,7 @@ int	main(int argc, char **argv)
 		clear_table(&table);
 		return (-1);
 	}
-	run_simulation(head, table);
+	//run_simulation(head, table);
 	clean_all(&head, valid_args, &table);
 	return (0);
 }
