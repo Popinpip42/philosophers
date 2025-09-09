@@ -9,6 +9,7 @@
 # include <ctype.h>
 # include <limits.h>
 # include <sys/time.h>
+# include <sys/wait.h>
 
 typedef int				(*t_validation_func)(const char *);
 typedef int				(*t_is_separator)(int);
